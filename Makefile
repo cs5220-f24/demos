@@ -1,16 +1,15 @@
-CC=cc
-CXX=c++
-CXXFLAGS=-std=gnu++20
+PLATFORM=nersc
+include Makefile.in.$(PLATFORM)
 
 .PHONY: clean all
 
-all: centroid2d.x centroid2d++.x
+all: centroid2d.x centroid2d++.x hello-mpi.x
 
-centroid2d.x: centroid2d.c
+%.x: %.c
 	$(CC) $< -o $@
 
-centroid2d++.x: centroid2d.cc
+%.x: %.cc
 	$(CXX) $(CXXFLAGS) $< -o $@
 
 clean:
-	rm -f centroid2d.x centroid2d++.x
+	rm -f centroid2d.x centroid2d++.x hello-mpi.x
