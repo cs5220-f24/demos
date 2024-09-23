@@ -11,8 +11,5 @@ all: centroid2d.x centroid2d++.x hello-mpi.x
 %.x: %.cc
 	$(CXX) $(CXXFLAGS) $< -o $@ 
 
-hello-mpi1.x: hello-mpi1.cc
-	$(CXX) $(CXXFLAGS) $< -o $@ $(BOOSTLIBS)
-
 clean:
 	rm -f centroid2d.x centroid2d++.x hello-mpi.x hello-mpi1.x
