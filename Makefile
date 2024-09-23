@@ -3,13 +3,16 @@ include Makefile.in.$(PLATFORM)
 
 .PHONY: clean all
 
-all: centroid2d.x centroid2d++.x hello-mpi.x
+all: centroid2d.x centroid2d++.x hello-mpi.x 
 
 %.x: %.c
 	$(CC) $< -o $@
 
 %.x: %.cc
-	$(CXX) $(CXXFLAGS) $< -o $@
+	$(CXX) $(CXXFLAGS) $< -o $@ 
+
+hello-mpi1.x: hello-mpi1.cc
+	$(CXX) $(CXXFLAGS) $< -o $@ $(BOOSTLIBS)
 
 clean:
-	rm -f centroid2d.x centroid2d++.x hello-mpi.x
+	rm -f centroid2d.x centroid2d++.x hello-mpi.x hello-mpi1.x
