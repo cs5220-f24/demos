@@ -1,3 +1,0 @@
-CC=cc
-CXX=c++
-CXXFLAGS=-std=gnu++20

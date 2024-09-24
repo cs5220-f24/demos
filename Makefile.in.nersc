@@ -1,3 +1,7 @@
 CC=cc
 CXX=CC
+MPICC=cc
+MPICXX=CC
+
+CFLAGS=-std=gnu17
 CXXFLAGS=-std=gnu++20
