@@ -5,13 +5,14 @@
 #include <span>
 #include <random>
 
+//ldoc on
 /**
  * ## Hello world
- *
+ * 
  * This one is relatively straightforward: each rank says hello by
  * printing to the standard output.  Note that the output lines can
  * appear in whatever order they want!
- *
+ * 
  */
 void hello(int size, int rank)
 {
@@ -21,7 +22,7 @@ void hello(int size, int rank)
 
 /**
  * ## Send, recv, and sendrecv
- *
+ * 
  * The `MPI_Send` operation is blocking, which means that under some
  * circumstances (like those we described in class), we can get into a
  * deadlock if there is a cycle of processors trying to send to each
@@ -31,7 +32,7 @@ void hello(int size, int rank)
  * that the MPI implementation (and operating system) provides!  Here
  * we test this out, running with incrementally larger messages until
  * we actually see a deadlock condition.
- *
+ * 
  */
 void deadlock_attempt(int size, int rank)
 {
@@ -63,7 +64,7 @@ void deadlock_attempt(int size, int rank)
  * individual sends and recieves) run concurrently, so that we won't
  * deadlock even if there is a communication cycle.  We test this
  * out here.
- *
+ * 
  */
 void deadlock_nonattempt(int size, int rank)
 {
@@ -89,7 +90,7 @@ void deadlock_nonattempt(int size, int rank)
 
 /**
  * ## Computing all-to-all interactions
- *
+ * 
  * The typical all-to-all interaction looks like
  * $$
  *   f(x_i) = \sum_{j} k(x_i, x_j) c_j
@@ -98,7 +99,7 @@ void deadlock_nonattempt(int size, int rank)
  * a faster way to compute this than explicitly evaluating all the
  * sums, but that is not our interest here.  We want to show off
  * some MPI calls by doing things in a brute-force way.
- *
+ * 
  * The "pass it around" protocol discussed in the slides manages
  * memory scalability by saying that each rank is assigned "ownership"
  * of disjoint pieces of the array of points $x_i$.  A rank is responsible
@@ -107,15 +108,15 @@ void deadlock_nonattempt(int size, int rank)
  * "pass the dish" protocol: we keep a set of particle data that we
  * compute interactions against at each phase, and rotate those interactions
  * around the ring.
- *
+ * 
  */
 
 /**
  * ### The main data structure
- *
+ * 
  * Let's set up a class for all the communication buffers and
  * indexing structures that we need.
- *
+ * 
  */
 class A2ASim {
 public:
@@ -151,7 +152,15 @@ private:
 };
 
 
-// Initialize an a2a_sim_t data structure
+/**
+ * ### Initialization
+ * 
+ * The constructor sets up two key arrays: `offsets`, which has
+ * the start index of each processors piece of the point array;
+ * and `counts`, which has the number of points that belong to each
+ * processor.  Note that this computation is duplicated on all processors.
+ * 
+ */
 A2ASim::A2ASim(int npoints)
 {
     // Get size and rank info from communicator
@@ -183,11 +192,11 @@ A2ASim::A2ASim(int npoints)
 
 /**
  * ### Scattering and gathering
- *
+ * 
  * In order to avoid the complexities of parallel random number generation,
  * we are going to create all the initial points at rank 0 and then *scatter*
  * them to the other processors.
- *
+ * 
  */
 void A2ASim::generate_points()
 {
@@ -227,7 +236,7 @@ void A2ASim::generate_points()
 /**
  * Conversely, at the end we will *gather* all the results to rank 0
  * for output.
- *
+ * 
  */
 void A2ASim::print_results()
 {
@@ -260,17 +269,17 @@ void A2ASim::print_results()
 
 /**
  * ### Passing data
- *
+ * 
  * In the main loop, we'll send from each processor to the next processor
  * mod the total number of processors.  We do this with a nonblocking
  * send/receive operation.  Our communication thus has two phases:
- *
+ * 
  * 1. We copy data into the send buffer and start the send/receive pair.
  * 2. We wait on message completions and copy data out of the recv buffer.
- *
+ * 
  * In between these two phases, we can do computations that do not involve
  * either of the buffers being communicated.
- *
+ * 
  */
 void A2ASim::start_sendrecv(int phase)
 {
@@ -300,11 +309,11 @@ void A2ASim::end_sendrecv()
 
 /**
  * ### Core computation
- *
+ * 
  * We start with the computational kernel, with a $1/r^2$ interaction function
  * (the same type that we would see in electrostatic or gravitational
  * interactions).  We use unit weights on all the interactions.
- *
+ * 
  */
 void A2ASim::add_interact(std::span<double> other_pts)
 {
@@ -324,11 +333,11 @@ void A2ASim::add_interact(std::span<double> other_pts)
 
 /**
  * ### The main computation
- *
+ * 
  * Having wrapped all the MPI calls in previous helper functions,
  * the main routine to generate points, do all the interactions,
  * and gather and print results can now be fairly terse.
- *
+ * 
  */
 void A2ASim::compute()
 {
@@ -347,6 +356,7 @@ void A2ASim::compute()
 
 /**
  * ## The main routine
+ * 
  */
 int main(int argc, char** argv)
 {

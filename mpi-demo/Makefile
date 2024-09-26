@@ -7,6 +7,9 @@ EXE=mpi-demo.x
 %.x: %.cc
 	$(MPICXX) $(CXXFLAGS) $< -o $@
 
+%.md: %.cc
+	ldoc -o $@ $<
+
 all: $(EXE)
 
 clean:
