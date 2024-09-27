@@ -4,4 +4,4 @@ MPICC=cc
 MPICXX=CC
 
 CFLAGS=-std=gnu17
-CXXFLAGS=-std=gnu++20
+CXXFLAGS=-std=gnu++23

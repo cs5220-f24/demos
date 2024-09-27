@@ -287,7 +287,7 @@ void A2ASim::start_sendrecv(int phase)
     int rprev = (rank + nproc - 1) % nproc;
     int rnext = (rank + 1) % nproc;
 
-    // Copy current remote points into sendbuf space
+    // Copy current remote points from sendbuf space
     std::copy(sendbuf.begin(), sendbuf.end(), rpoints.begin());
 
     // Start nonblocking send/recieve
@@ -370,7 +370,7 @@ int main(int argc, char** argv)
     hello(world_size, world_rank);
 
     // Only run this if you want to deadlock!
-    // deadlock_attempt(world_size, world_rank);
+    //deadlock_attempt(world_size, world_rank);
 
     // Or not
     // deadlock_nonattempt(world_size, world_rank);
