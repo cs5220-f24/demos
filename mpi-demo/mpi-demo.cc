@@ -1,6 +1,6 @@
 #include <mpi.h>
 
-#include <print>
+#include <iostream>
 #include <vector>
 #include <span>
 #include <random>
@@ -16,7 +16,7 @@
  */
 void hello(int size, int rank)
 {
-    std::println("Hello from {} / {}", rank, size);
+    std::cout << "Hello from " << rank << " / " << size << std::endl;
 }
 
 
@@ -37,7 +37,7 @@ void hello(int size, int rank)
 void deadlock_attempt(int size, int rank)
 {
     if (size != 2) {
-        std::println("Should be run with two ranks");
+        std::cout << "Should be run with two ranks" << std::endl;
         return;
     }
 
@@ -50,8 +50,8 @@ void deadlock_attempt(int size, int rank)
                  0, MPI_COMM_WORLD);
         MPI_Recv(recvbuf.data(), num_ints, MPI_INT, 1-rank,
                  0, MPI_COMM_WORLD, &status);
-        std::println("{}: Received from {} ({})",
-                     rank, status.MPI_SOURCE, num_ints);
+        std::cout << rank << ": Received from " << status.MPI_SOURCE
+                  << " (" << num_ints << ")" << std::endl;
         num_ints *= 10;
     }
 }
@@ -69,7 +69,7 @@ void deadlock_attempt(int size, int rank)
 void deadlock_nonattempt(int size, int rank)
 {
     if (size != 2) {
-        std::println("Should be run with two ranks");
+        std::cout << "Should be run with two ranks" << std::endl;
         return;
     }
 
@@ -81,8 +81,8 @@ void deadlock_nonattempt(int size, int rank)
         MPI_Sendrecv(sendbuf.data(), num_ints, MPI_INT, 1-rank, 0,
                      recvbuf.data(), num_ints, MPI_INT, 1-rank, 0,
                      MPI_COMM_WORLD, &status);
-        std::println("{}: Received from {} ({})", 
-                     rank, status.MPI_SOURCE, num_ints);
+        std::cout << rank << ": Received from " << status.MPI_SOURCE
+                  << " (" << num_ints << ")" << std::endl;
         num_ints *= 10;
     }
 }
@@ -204,12 +204,12 @@ void A2ASim::generate_points()
         // Initialize the global points array
         int ntotal = offsets[nproc];
         std::vector<double> all_points(ntotal);
-        std::print("Initialize array:");
+        std::cout << "Initialize array:";
         for (int i = 0; i < ntotal; ++i) {
             all_points[i] = drand48();
-            std::print(" {:g}", all_points[i]);
+            std::cout << " " << all_points[i];
         }
-        std::println("");
+        std::cout << std::endl;
         
         // Distribute points to all ranks (scatter)
         MPI_Scatterv(all_points.data(),
@@ -225,11 +225,12 @@ void A2ASim::generate_points()
     }
     
     // Print what we got at each rank
-    std::print("On rank {} ({}-{}): ", rank,
-                 offsets[rank], offsets[rank+1]);
+    std::cout << "On rank " << rank
+              << " (" << offsets[rank] << "-" << offsets[rank+1] << "): ";
+
     for (int i = 0; i < counts[rank]; ++i)
-        std::print(" {:g}", points[i]);
-    std::println("");
+        std::cout << " " << points[i];
+    std::cout << std::endl;
 }
 
 
@@ -253,10 +254,10 @@ void A2ASim::print_results()
                     0, MPI_COMM_WORLD);
 
         // Print results at rank 0
-        std::print("Results: ");
+        std::cout << "Results: ";
         for (auto result : all_results)
-            std::print(" {:g}", result);
-        std::println("\n");
+            std::cout << " " << result;
+        std::cout << std::endl;
         
     } else {
         MPI_Gatherv(results.data(), counts[rank], MPI_DOUBLE,
